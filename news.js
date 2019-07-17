@@ -65,7 +65,9 @@ var displayPage = () => {
 }
 
 var header = () => {
-	let html = `<h1 class="header__heading">NEWSFEED</h1><p class="header__caption">Yet another newsfeed</p>`;
+	let html = `<h1 class="header__heading">NEWSFEED</h1><p class="header__caption">Yet another newsfeed</p>
+				<input type='text' id='subscribe' class='form__subscribe-textbox' placeholder='Email Address'/>
+				<button class='form__subscribe-button' onclick='validate()'>Subscribe</button>`;
 	document.getElementById('header').innerHTML = html;
 }
 
@@ -103,9 +105,7 @@ var displayForm = () => {
 		<option value='All' selected>All</option>
 		${allChannels} 
 		</select>
-		<label for='subscribe' class='form__subscribe-label'><b>SUBSCRIBE</b></label>
-		<input type='text' id='subscribe' class='form__subscribe-textbox' placeholder='Email Address'/>
-		<button class='form__subscribe-button' onclick='validate()'>Subscribe</button>
+
 		</div>`;
 	});
 }

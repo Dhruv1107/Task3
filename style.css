@@ -46,6 +46,23 @@ body {
   top: 29%;
   left: 20%;
 }
+.form__subscribe-textbox {
+  position: absolute;
+  top: 35%;
+  left: 76%;
+  width: 13.5vw;
+  height: 5vh;
+  text-indent: 0.3rem;
+}
+.form__subscribe-button {
+  position: absolute;
+  top: 35%;
+  left: 87%;
+  background: #262626;
+  color: white;
+  height: 5vh;
+  border: 0;
+}
 .full {
   position: relative;
   top: 6rem;
@@ -160,29 +177,7 @@ label {
   height: 5vh;
   text-indent: 0.3rem;
 }
-.form__subscribe-label {
-  font-size: 0.8rem;
-  font-family: Verdana, Geneva, sans-serif;
-  position: absolute;
-  top: 12%;
-}
-.form__subscribe-textbox {
-  position: absolute;
-  top: 16%;
-  left: 0%;
-  width: 13.5vw;
-  height: 5vh;
-  text-indent: 0.3rem;
-}
-.form__subscribe-button {
-  position: absolute;
-  top: 16%;
-  left: 50%;
-  background: #262626;
-  color: white;
-  height: 5vh;
-  border: 0;
-}
+
 .footer {
   position: fixed;
   background: #273852;
