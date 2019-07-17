@@ -26,30 +26,34 @@ function myFunction() {
 		data = data.articles;
 
 		let selectedCategory = document.getElementById('sel-category').value;
-		let display;
-		let indexDisplay;
+		let display = " ";
+		let indexDisplay = [];
 		if (selectedCategory !== 'All') {
-			let selectedData = data.filter(function(e, index) {
-				if (selectedCategory === e.source.name) {
-					indexDisplay = index;
-				}
+			let selectedData = data.filter(function (e, index) {
+				if (selectedCategory === e.source.name)
+					indexDisplay.push(index);
 				return selectedCategory === e.source.name;
 			});
 			console.log(selectedData);
-			display = `<div class='content' id='content'>
+			let popupIndex = 0;
+			selectedData.forEach(currentItem => {
+				console.log(currentItem.urlToImage);
+				display += `<div class='content' id='content'>
 					<div class='content__sub' id='content__display'>
-					<img src='${selectedData[0].urlToImage}' class='content__img' ></img>
+					<img src='${currentItem.urlToImage}' class='content__img' ></img>
 					<h3 class='content__modifier content__head'>
-					${selectedData[0].title}
+					${currentItem.title}
 					</h3> 
 					<p class='content__modifier content__date'>
-					${selectedData[0].publishedAt}
+					${currentItem.publishedAt}
 					</p> 
 					<p class='content__modifier content__matter'>
-					${selectedData[0].description}
+					${currentItem.description}
 					</p>
-					<a href='#' class='content__modifier btn btn--pink' id='myBtn' onclick='showpopup(${indexDisplay})'>Continue Reading</a>
+					<a href='#' class='content__modifier btn btn--pink' id='myBtn' onclick='showpopup(${indexDisplay[popupIndex++]})'>Continue Reading</a>
 					</div></div>`;
+			});
+
 			document.getElementById('displaynews').innerHTML = display;
 		} else if (selectedCategory === 'All') {
 			document.getElementById('displaynews').innerHTML = fullData;
@@ -86,7 +90,7 @@ function displayForm() {
 		data.forEach((e) => {
 			channels.push(e.source.name);
 		});
-		channels = [ ...new Set(channels) ];
+		channels = [...new Set(channels)];
 
 		let formDivision = document.createElement('div');
 		formDivision.setAttribute('id', 'iamform');
@@ -165,16 +169,21 @@ function validate() {
 
 //When the user clicks the button, open the modal (for one news channel)
 function showpopup(i) {
-	let modelDivision = document.createElement('div');
-	modelDivision.setAttribute('id', 'iammodal');
-	let contentDivision = document.getElementById('content');
-	contentDivision.appendChild(modelDivision);
-	document.getElementById('iammodal').innerHTML = modalData;
+	let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
+	let req = new Request(url);
+	fetch(req).then((res) => res.json()).then((data) => {
+		data = data.articles;
+		let modelDivision = document.createElement('div');
+		modelDivision.setAttribute('id', 'iammodal');
+		let contentDivision = document.getElementById('content');
+		contentDivision.appendChild(modelDivision);
+		document.getElementById('iammodal').innerHTML = modalData;
 
-	document.getElementById('popup_head').innerHTML = data[i].heading;
-	document.getElementById('popup_content').innerHTML = data[i].popup;
-	let modal = document.getElementById('myModal');
-	modal.style.display = 'block';
+		document.getElementById('popup_head').innerHTML = data[i].title;
+		document.getElementById('popup_content').innerHTML = data[i].content;
+		let modal = document.getElementById('myModal');
+		modal.style.display = 'block';
+	});
 }
 
 //When the user clicks on <span> (x), close the modal
@@ -184,7 +193,7 @@ function closepopup() {
 }
 
 //When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
+window.onclick = function (event) {
 	let modal = document.getElementById('myModal');
 	if (event.target == modal) {
 		modal.style.display = 'none';
