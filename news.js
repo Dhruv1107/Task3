@@ -1,7 +1,6 @@
-//Channels present in the dropdown list
-// let channels = [ 'BBC', 'Aaj Tak', 'NBC', 'NDTV', 'Republic', 'TV9', 'India Today', 'Times Now', 'Fox News', 'CNN' ];
 //variable used to store the complete data of all news channels
 let fullData = ' ';
+let data1 = [];
 //variable used to store the popup content
 let modalData = `<div id="myModal" class="modal">
 					<div class="modal-content">
@@ -10,7 +9,7 @@ let modalData = `<div id="myModal" class="modal">
 							<h2 id="popup_head"></h2>
 						</div>
 						<div class="modal-body">
-							<p id="popup_content"></p>
+							<p id="popup_content" class="popup_content"></p>
 						</div>
 						<div class="modal-footer">
 							<h3 id="popup_foot">&copy; NewsFeed 2019</h3>
@@ -19,26 +18,22 @@ let modalData = `<div id="myModal" class="modal">
 				</div>`;
 
 //Function to display the selected news category
-function myFunction() {
-	let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
-	let req = new Request(url);
-	fetch(req).then((res) => res.json()).then((data) => {
-		data = data.articles;
-
-		let selectedCategory = document.getElementById('sel-category').value;
-		let display = " ";
-		let indexDisplay = [];
-		if (selectedCategory !== 'All') {
-			let selectedData = data.filter(function (e, index) {
-				if (selectedCategory === e.source.name)
-					indexDisplay.push(index);
-				return selectedCategory === e.source.name;
-			});
-			console.log(selectedData);
-			let popupIndex = 0;
-			selectedData.forEach(currentItem => {
-				console.log(currentItem.urlToImage);
-				display += `<div class='content' id='content'>
+var selectCategoryNews = () => {
+	console.log(data1);
+	let selectedCategory = document.getElementById('sel-category').value;
+	let display = " ";
+	let indexDisplay = [];
+	if (selectedCategory !== 'All') {
+		let selectedData = data1.filter(function (e, index) {
+			if (selectedCategory === e.source.name)
+				indexDisplay.push(index);
+			return selectedCategory === e.source.name;
+		});
+		console.log(selectedData);
+		let popupIndex = 0;
+		selectedData.forEach(currentItem => {
+			console.log(currentItem.urlToImage);
+			display += `<div class='content' id='content'>
 					<div class='content__sub' id='content__display'>
 					<img src='${currentItem.urlToImage}' class='content__img' ></img>
 					<h3 class='content__modifier content__head'>
@@ -51,43 +46,42 @@ function myFunction() {
 					${currentItem.description}
 					</p>
 					<a href='#' class='content__modifier btn btn--pink' id='myBtn' onclick='showpopup(${indexDisplay[popupIndex++]})'>Continue Reading</a>
-					</div></div>`;
-			});
+					</div><hr></div>`;
+		});
 
-			document.getElementById('displaynews').innerHTML = display;
-		} else if (selectedCategory === 'All') {
-			document.getElementById('displaynews').innerHTML = fullData;
-		}
-	});
+		document.getElementById('displaynews').innerHTML = display;
+	} else if (selectedCategory === 'All') {
+		document.getElementById('displaynews').innerHTML = fullData;
+	}
 }
 
 //On Load Function Call
 
-function displayPage() {
+var displayPage = () => {
 	header();
 	footer();
 	displayForm();
 	displayNews();
 }
 
-function header() {
+var header = () => {
 	let html = `<h1 class="header__heading">NEWSFEED</h1><p class="header__caption">Yet another newsfeed</p>`;
 	document.getElementById('header').innerHTML = html;
 }
 
-function footer() {
+var footer = () => {
 	let html = `<p class="footer__copyright">&copy; NewsFeed 2019</p>`;
 	document.getElementById('footer').innerHTML = html;
 }
 
-function displayForm() {
+var displayForm = () => {
 	let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
 	let req = new Request(url);
 	fetch(req).then((res) => res.json()).then((data) => {
-		data = data.articles;
+		data1 = data.articles;
 
 		let channels = [];
-		data.forEach((e) => {
+		data1.forEach((e) => {
 			channels.push(e.source.name);
 		});
 		channels = [...new Set(channels)];
@@ -104,8 +98,8 @@ function displayForm() {
 
 		document.getElementById('iamform').innerHTML = `<div class='form'>
 		<label for='sel-category' class='form__select-label'><b>SELECT CATEGORY</b></label>
-		<select id='sel-category' class='form__select-box' onchange='myFunction()'>
-		// If the select is changed myFunction() is called
+		<select id='sel-category' class='form__select-box' onchange='selectCategoryNews()'>
+		// If the select is changed selectCategoryNews() is called
 		<option value='All' selected>All</option>
 		${allChannels} 
 		</select>
@@ -116,11 +110,11 @@ function displayForm() {
 	});
 }
 
-function displayNews() {
+var displayNews = () => {
 	let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
 	let req = new Request(url);
 	fetch(req).then((res) => res.json()).then((data) => {
-		console.log(data);
+		// console.log(data);
 		data = data.articles;
 		// console.log(data[0].source.name);
 		let displayNews = document.createElement('div');
@@ -151,7 +145,7 @@ function displayNews() {
 }
 //For Validation of Email Address
 let email = [];
-function validate() {
+var validate = () => {
 	if (/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(document.getElementById('subscribe').value)) {
 		let loc = localStorage.getItem('iamkey');
 		if (loc) {
@@ -168,26 +162,23 @@ function validate() {
 }
 
 //When the user clicks the button, open the modal (for one news channel)
-function showpopup(i) {
-	let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
-	let req = new Request(url);
-	fetch(req).then((res) => res.json()).then((data) => {
-		data = data.articles;
-		let modelDivision = document.createElement('div');
-		modelDivision.setAttribute('id', 'iammodal');
-		let contentDivision = document.getElementById('content');
-		contentDivision.appendChild(modelDivision);
-		document.getElementById('iammodal').innerHTML = modalData;
+var showpopup = (i) => {
 
-		document.getElementById('popup_head').innerHTML = data[i].title;
-		document.getElementById('popup_content').innerHTML = data[i].content;
-		let modal = document.getElementById('myModal');
-		modal.style.display = 'block';
-	});
+	let modelDivision = document.createElement('div');
+	modelDivision.setAttribute('id', 'iammodal');
+	let contentDivision = document.getElementById('content');
+	contentDivision.appendChild(modelDivision);
+	document.getElementById('iammodal').innerHTML = modalData;
+
+	document.getElementById('popup_head').innerHTML = data1[i].title;
+	document.getElementById('popup_content').innerHTML = data1[i].content;
+	let modal = document.getElementById('myModal');
+	modal.style.display = 'block';
+
 }
 
 //When the user clicks on <span> (x), close the modal
-function closepopup() {
+var closepopup = () => {
 	let modal = document.getElementById('myModal');
 	modal.style.display = 'none';
 }

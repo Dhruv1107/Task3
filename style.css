@@ -258,6 +258,9 @@ label {
 .modal-body {
   padding: 2px 16px;
 }
+.popup_content {
+  overflow: visible;
+}
 
 .modal-footer {
   padding: 2px 16px;
