@@ -163,7 +163,7 @@ let validate = () => {
 };
 
 //When the user clicks the button, open the modal (for one news channel)
-let showpopup = (i, data) => {
+let showpopup = (index, data) => {
 	let modalData = `<div id="myModal" class="modal">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -186,8 +186,8 @@ let showpopup = (i, data) => {
 	document.getElementById('iammodal').innerHTML = modalData;
 	document.getElementById('spanClose').addEventListener('click', closepopup);
 
-	document.getElementById('popup_head').innerHTML = data[i].title;
-	document.getElementById('popup_content').innerHTML = data[i].content;
+	document.getElementById('popup_head').innerHTML = data[index].title;
+	document.getElementById('popup_content').innerHTML = data[index].content;
 	let modal = document.getElementById('myModal');
 	modal.style.display = 'block';
 };
