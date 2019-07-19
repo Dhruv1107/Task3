@@ -1,65 +1,20 @@
 //variable used to store the complete data of all news channels
 let news;
 window.onload = () => {
-	console.log('onload');
 	news = new News();
 };
 class News {
 	constructor() {
 		this.fullData = '';
-		this.data1 = [];
-		this.email = [];
+		// this.email = [];
 		this.displayPage();
 	}
 
-	//Function to display the selected news category
-	selectCategoryNews = () => {
-		let selectedCategory = document.getElementById('sel-category').value;
-		let display = ' ';
-		let indexDisplay = [];
-		let data = this.data1;
-
-		let selectedData = data.filter(function(e, index) {
-			if (selectedCategory === e.source.name) indexDisplay.push(index);
-			return selectedCategory === e.source.name;
-		});
-
-		let popupIndex = 0;
-		selectedData.forEach((currentItem, index) => {
-			console.log(currentItem.urlToImage);
-			display += `<div class='content' id='content'>
-					<div class='content__sub' id='content__display'>
-					<img src='${currentItem.urlToImage}' class='content__img' ></img>
-					<h3 class='content__modifier content__head'>
-					${currentItem.title}
-					</h3> 
-					<p class='content__modifier content__date'>
-					${currentItem.publishedAt}
-					</p> 
-					<p class='content__modifier content__matter'>
-					${currentItem.description}
-					</p>
-					<a href='#' class='content__modifier btn btn--pink' id='myBtn${index}'>Continue Reading</a>
-					</div><hr></div>`;
-		});
-
-		document.getElementById('displaynews').innerHTML = display;
-		for (let index = 0; index < selectedData.length; index++) {
-			console.log(document.getElementById(`myBtn${index}`).innerHTML);
-			document.getElementById(`myBtn${index}`).addEventListener('click', function() {
-				console.log(data);
-				showpopup(indexDisplay[index], data);
-			});
-		}
-	};
-
 	//On Load Function Call
-
 	displayPage = () => {
 		this.header();
 		this.footer();
-		this.displayForm();
-		this.displayNews();
+		this.response();
 	};
 
 	header = () => {
@@ -75,83 +30,123 @@ class News {
 		document.getElementById('footer').innerHTML = html;
 	};
 
-	displayForm = () => {
+	response = () => {
 		let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
 		let req = new Request(url);
 		fetch(req).then((res) => res.json()).then((data) => {
-			this.data1 = data.articles;
-
-			let channels = [];
-			this.data1.forEach((e) => {
-				channels.push(e.source.name);
-			});
-			channels = [ ...new Set(channels) ];
-
-			let formDivision = document.createElement('div');
-			formDivision.setAttribute('id', 'iamform');
-			let mainDivision = document.getElementById('main');
-			mainDivision.appendChild(formDivision);
-
-			let allChannels = '';
-			for (let i = 0; i < channels.length; i++) {
-				allChannels += `<option value='${channels[i]}'>${channels[i]}</option>`;
-			}
-
-			document.getElementById('iamform').innerHTML = `<div class='form'>
-		<label for='sel-category' class='form__select-label'><b>SELECT CATEGORY</b></label>
-		<select id='sel-category' class='form__select-box'>
-		// If the select is changed selectCategoryNews() is called
-		${allChannels} 
-		</select>
-
-		</div>`;
-			document.getElementById('sel-category').addEventListener('change', this.selectCategoryNews);
+			// this.dataJSON = data.articles;
+			this.displayForm(data.articles);
+			this.displayNews(data.articles);
 		});
+	}
+
+	displayForm = (dataJSON) => {
+		let channels = [];
+		dataJSON.forEach((e) => {
+			channels.push(e.source.name);
+		});
+		channels = [...new Set(channels)];
+
+		let formDivision = document.createElement('div');
+		formDivision.setAttribute('id', 'iamform');
+		let mainDivision = document.getElementById('main');
+		mainDivision.appendChild(formDivision);
+
+		let allChannels = '';
+		for (let i = 0; i < channels.length; i++) {
+			allChannels += `<option value='${channels[i]}'>${channels[i]}</option>`;
+		}
+
+		document.getElementById('iamform').innerHTML = `<div class='form'>
+				<label for='sel-category' class='form__select-label'><b>SELECT CATEGORY</b></label>
+				<select id='sel-category' class='form__select-box'>
+				${allChannels} 
+				</select>
+				</div>`;
+		document.getElementById('sel-category').addEventListener('change', function () {
+			selectCategoryNews(dataJSON);
+		});
+
 	};
 
-	displayNews = () => {
-		let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
-		let req = new Request(url);
-		fetch(req).then((res) => res.json()).then((data) => {
-			// console.log(data);
-			data = data.articles;
-			// console.log(data[0].source.name);
-			let displayNews = document.createElement('div');
-			displayNews.setAttribute('id', 'displaynews');
-			let main = document.getElementById('main');
-			main.appendChild(displayNews);
+	displayNews = (dataJSON) => {
+		let displayNews = document.createElement('div');
+		displayNews.setAttribute('id', 'displaynews');
+		let main = document.getElementById('main');
+		main.appendChild(displayNews);
 
-			for (let index = 0; index < data.length; index++) {
-				this.fullData += `<div class='content' id='content'>
+		for (let index = 0; index < dataJSON.length; index++) {
+			this.fullData += `<div class='content' id='content'>
 			<div class='content__sub' id='content__display'>
-			<img src='${data[index].urlToImage}' class='content__img' ></img>
+			<img src='${dataJSON[index].urlToImage}' class='content__img' ></img>
 			<h3 class='content__modifier content__head' id='myBtn'>
-			${data[index].title}
+			${dataJSON[index].title}
 			</h3>
 			<p class='content__modifier content__date'>
-			${data[index].publishedAt}
+			${dataJSON[index].publishedAt}
 			</p>
 			<p class='content__modifier content__matter'>
-			${data[index].description}
+			${dataJSON[index].description}
 			</p>
 			<a href='#!' class='content__modifier btn btn--pink' id='myBtn${index}'>Continue Reading</a>
 			</div>
 			<hr>`;
-			}
-			document.getElementById('displaynews').innerHTML = this.fullData;
-			// let newsObj = new News();
-			// document.getElementById(`myBtn0`).addEventListener("click", function () { showpopup(0); });
-			for (let index = 0; index < data.length; index++) {
-				document.getElementById(`myBtn${index}`).addEventListener('click', function() {
-					showpopup(index, data);
-				});
-			}
-		});
+		}
+		document.getElementById('displaynews').innerHTML = this.fullData;
+
+		for (let index = 0; index < dataJSON.length; index++) {
+			document.getElementById(`myBtn${index}`).addEventListener('click', function () {
+				showpopup(index, dataJSON);
+			});
+		}
+
 	};
 }
 
+//Function to display the selected news category
+let selectCategoryNews = (dataJSON) => {
+	let selectedCategory = document.getElementById('sel-category').value;
+	let display = ' ';
+	let indexDisplay = [];
+	let data = dataJSON;
+
+	let selectedData = data.filter(function (e, index) {
+		if (selectedCategory === e.source.name) {
+			indexDisplay.push(index);
+		}
+		return selectedCategory === e.source.name;
+	});
+
+	let popupIndex = 0;
+	selectedData.forEach((currentItem, index) => {
+		display += `<div class='content' id='content'>
+				<div class='content__sub' id='content__display'>
+				<img src='${currentItem.urlToImage}' class='content__img' ></img>
+				<h3 class='content__modifier content__head'>
+				${currentItem.title}
+				</h3> 
+				<p class='content__modifier content__date'>
+				${currentItem.publishedAt}
+				</p> 
+				<p class='content__modifier content__matter'>
+				${currentItem.description}
+				</p>
+				<a href='#' class='content__modifier btn btn--pink' id='myBtn${index}'>Continue Reading</a>
+				</div><hr></div>`;
+	});
+
+	document.getElementById('displaynews').innerHTML = display;
+	for (let index = 0; index < selectedData.length; index++) {
+		document.getElementById(`myBtn${index}`).addEventListener('click', function () {
+			console.log(data);
+			showpopup(indexDisplay[index], data);
+		});
+	}
+};
+
 //For Validation of Email Address
 let validate = () => {
+	let email = [];
 	if (/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(document.getElementById('subscribe').value)) {
 		let loc = localStorage.getItem('iamkey');
 		if (loc) {
@@ -169,7 +164,6 @@ let validate = () => {
 
 //When the user clicks the button, open the modal (for one news channel)
 let showpopup = (i, data) => {
-	// console.log("in showpopup");
 	let modalData = `<div id="myModal" class="modal">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -191,8 +185,7 @@ let showpopup = (i, data) => {
 	contentDivision.appendChild(modelDivision);
 	document.getElementById('iammodal').innerHTML = modalData;
 	document.getElementById('spanClose').addEventListener('click', closepopup);
-	// let newsObj = new News();
-	console.log(data);
+
 	document.getElementById('popup_head').innerHTML = data[i].title;
 	document.getElementById('popup_content').innerHTML = data[i].content;
 	let modal = document.getElementById('myModal');
@@ -206,7 +199,7 @@ let closepopup = () => {
 };
 
 //When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
+window.onclick = function (event) {
 	let modal = document.getElementById('myModal');
 	if (event.target == modal) {
 		modal.style.display = 'none';
