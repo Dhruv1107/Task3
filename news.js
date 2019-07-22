@@ -188,12 +188,13 @@ let showpopup = (index, data) => {
 
 	document.getElementById('popup_head').innerHTML = data[index].title;
 	document.getElementById('popup_content').innerHTML = data[index].content;
+	document.getElementById('myModal').classList.remove('modal');
 	document.getElementById('myModal').classList.add('modal')
 };
 
 //When the user clicks on <span> (x), close the modal
 let closepopup = () => {
-	document.getElementById('myModal').classList.remove('modal');
+	document.getElementById('myModal').classList.add("modal1");
 };
 
 //When the user clicks anywhere outside of the modal, close it
