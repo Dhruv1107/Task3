@@ -18,8 +18,8 @@ class News {
 
 	header = () => {
 		let html = `<h1 class="header__heading">NEWSFEED</h1><p class="header__caption">Yet another newsfeed</p>
-				<input type='text' id='subscribe' class='form__subscribe-textbox' placeholder='Email Address'/>
-				<button class='form__subscribe-button' id='subBtn'>Subscribe</button>`;
+				<input type='text' id='subscribe' class='header__subscribe-textbox' placeholder='Email Address'/>
+				<button class='header__subscribe-button' id='subBtn'>Subscribe</button>`;
 		document.getElementById('header').innerHTML = html;
 		document.getElementById('subBtn').addEventListener('click', validate);
 	};
@@ -33,7 +33,7 @@ class News {
 		let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
 		let req = new Request(url);
 		showLoader();
-		let res = await fetch(req)
+		await fetch(req)
 			.then((res) => res.json()).then((data) => {
 				this.displayForm(data.articles);
 				this.displayNews(data.articles);
@@ -49,6 +49,7 @@ class News {
 		dataJSON.forEach((e) => {
 			channels.push(e.source.name);
 		});
+		//Remove duplicate channels using set operator
 		channels = [...new Set(channels)];
 
 		let formDivision = document.createElement('div');
@@ -57,9 +58,9 @@ class News {
 		mainDivision.appendChild(formDivision);
 
 		let allChannels = '';
-		for (let i = 0; i < channels.length; i++) {
-			allChannels += `<option value='${channels[i]}'>${channels[i]}</option>`;
-		}
+		allChannels = channels.reduce(function (total, current) {
+			return total + `<option value='${current}'>${current}</option>`;
+		});
 
 		document.getElementById('iamform').innerHTML = `<div class='form'>
 				<label for='sel-category' class='form__select-label'><b>SELECT CATEGORY</b></label>
@@ -201,10 +202,16 @@ let closepopup = () => {
 	document.getElementById('myModal').classList.add("modal-none");
 };
 
+//When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+	let modal = document.getElementById('myModal');
+	if (event.target == modal) {
+		modal.style.display = 'none';
+	}
+};
 
-//Show Loader
+//Show Loader before data loads
 let showLoader = () => {
-	console.log("In show Loader");
 	let loader = document.createElement('div');
 	loader.setAttribute('id', 'loader');
 	loader.setAttribute('class', 'loader');
@@ -214,12 +221,5 @@ let showLoader = () => {
 
 let closeLoader = () => {
 	let loader = document.getElementById('loader');
-	loader.style.display = 'none';
+	loader.classList.remove('loader');
 }
-//When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-	let modal = document.getElementById('myModal');
-	if (event.target == modal) {
-		modal.style.display = 'none';
-	}
-};
