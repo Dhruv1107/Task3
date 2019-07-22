@@ -6,7 +6,6 @@ window.onload = () => {
 class News {
 	constructor() {
 		this.fullData = '';
-		// this.email = [];
 		this.displayPage();
 	}
 
@@ -30,14 +29,19 @@ class News {
 		document.getElementById('footer').innerHTML = html;
 	};
 
-	response = () => {
+	async response() {
 		let url = 'https://newsapi.org/v2/top-headlines?' + 'country=us&' + 'apiKey=9fdb04ee4078412b82f9dd7f760464f8';
 		let req = new Request(url);
-		fetch(req).then((res) => res.json()).then((data) => {
-			// this.dataJSON = data.articles;
-			this.displayForm(data.articles);
-			this.displayNews(data.articles);
-		});
+		showLoader();
+		let res = await fetch(req)
+			.then((res) => res.json()).then((data) => {
+				this.displayForm(data.articles);
+				this.displayNews(data.articles);
+			})
+			.catch(err => {
+				console.log(err);
+			});
+		closeLoader();
 	}
 
 	displayForm = (dataJSON) => {
@@ -131,7 +135,7 @@ let selectCategoryNews = (dataJSON) => {
 				<p class='content__modifier content__matter'>
 				${currentItem.description}
 				</p>
-				<a href='#' class='content__modifier btn btn--pink' id='myBtn${index}'>Continue Reading</a>
+				<a href='#!' class='content__modifier btn btn--pink' id='myBtn${index}'>Continue Reading</a>
 				</div><hr></div>`;
 	});
 
@@ -188,15 +192,30 @@ let showpopup = (index, data) => {
 
 	document.getElementById('popup_head').innerHTML = data[index].title;
 	document.getElementById('popup_content').innerHTML = data[index].content;
-	document.getElementById('myModal').classList.remove('modal');
-	document.getElementById('myModal').classList.add('modal')
+	document.getElementById('myModal').classList.remove('modal-none');
+	document.getElementById('myModal').classList.add('modal-block');
 };
 
 //When the user clicks on <span> (x), close the modal
 let closepopup = () => {
-	document.getElementById('myModal').classList.add("modal1");
+	document.getElementById('myModal').classList.add("modal-none");
 };
 
+
+//Show Loader
+let showLoader = () => {
+	console.log("In show Loader");
+	let loader = document.createElement('div');
+	loader.setAttribute('id', 'loader');
+	loader.setAttribute('class', 'loader');
+	let main = document.getElementById('main');
+	main.appendChild(loader);
+}
+
+let closeLoader = () => {
+	let loader = document.getElementById('loader');
+	loader.style.display = 'none';
+}
 //When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
 	let modal = document.getElementById('myModal');
