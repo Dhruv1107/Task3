@@ -164,7 +164,7 @@ let validate = () => {
 
 //When the user clicks the button, open the modal (for one news channel)
 let showpopup = (index, data) => {
-	let modalData = `<div id="myModal" class="modal">
+	let modalData = `<div id="myModal">
 					<div class="modal-content">
 						<div class="modal-header">
 							<span class="close" id="spanClose">&times;</span>
@@ -188,14 +188,12 @@ let showpopup = (index, data) => {
 
 	document.getElementById('popup_head').innerHTML = data[index].title;
 	document.getElementById('popup_content').innerHTML = data[index].content;
-	let modal = document.getElementById('myModal');
-	modal.style.display = 'block';
+	document.getElementById('myModal').classList.add('modal')
 };
 
 //When the user clicks on <span> (x), close the modal
 let closepopup = () => {
-	let modal = document.getElementById('myModal');
-	modal.style.display = 'none';
+	document.getElementById('myModal').classList.remove('modal');
 };
 
 //When the user clicks anywhere outside of the modal, close it
