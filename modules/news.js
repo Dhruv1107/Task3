@@ -36,6 +36,7 @@ class News {
 		await fetch(req)
 			.then((res) => res.json()).then((data) => {
 				this.displayForm(data.articles);
+				this.createDisplayDiv();
 				this.displayNews(data.articles);
 			})
 			.catch(err => {
@@ -46,8 +47,8 @@ class News {
 
 	displayForm = (dataJSON) => {
 		let channels = [];
-		dataJSON.forEach((e) => {
-			channels.push(e.source.name);
+		dataJSON.forEach((channel) => {
+			channels.push(channel.source.name);
 		});
 		//Remove duplicate channels using set operator
 		channels = [...new Set(channels)];
@@ -68,18 +69,22 @@ class News {
 				${allChannels} 
 				</select>
 				</div>`;
-		document.getElementById('sel-category').addEventListener('change', function () {
-			selectCategoryNews(dataJSON);
+		document.getElementById('sel-category').addEventListener('change', () => {
+			this.selectCategoryNews(dataJSON);
 		});
 
 	};
 
-	displayNews = (dataJSON) => {
+	createDisplayDiv = () => {
 		let displayNews = document.createElement('div');
 		displayNews.setAttribute('id', 'displaynews');
 		let main = document.getElementById('main');
 		main.appendChild(displayNews);
+	}
 
+	displayNews = (dataJSON) => {
+		console.log(dataJSON);
+		this.fullData = '';
 		for (let index = 0; index < dataJSON.length; index++) {
 			this.fullData += `<div class='content' id='content'>
 			<div class='content__sub' id='content__display'>
@@ -106,48 +111,25 @@ class News {
 		}
 
 	};
+
+	//Function to display the selected news category
+	selectCategoryNews = (dataJSON) => {
+		let selectedCategory = document.getElementById('sel-category').value;
+		let display = ' ';
+		let indexDisplay = [];
+		let data = dataJSON;
+
+		let selectedData = data.filter(function (e, index) {
+			if (selectedCategory === e.source.name) {
+				indexDisplay.push(index);
+			}
+			return selectedCategory === e.source.name;
+		});
+		this.displayNews(selectedData);
+	};
 }
 
-//Function to display the selected news category
-let selectCategoryNews = (dataJSON) => {
-	let selectedCategory = document.getElementById('sel-category').value;
-	let display = ' ';
-	let indexDisplay = [];
-	let data = dataJSON;
 
-	let selectedData = data.filter(function (e, index) {
-		if (selectedCategory === e.source.name) {
-			indexDisplay.push(index);
-		}
-		return selectedCategory === e.source.name;
-	});
-
-	let popupIndex = 0;
-	selectedData.forEach((currentItem, index) => {
-		display += `<div class='content' id='content'>
-				<div class='content__sub' id='content__display'>
-				<img src='${currentItem.urlToImage}' class='content__img' ></img>
-				<h3 class='content__modifier content__head'>
-				${currentItem.title}
-				</h3> 
-				<p class='content__modifier content__date'>
-				${currentItem.publishedAt}
-				</p> 
-				<p class='content__modifier content__matter'>
-				${currentItem.description}
-				</p>
-				<a href='#!' class='content__modifier btn btn--pink' id='myBtn${index}'>Continue Reading</a>
-				</div><hr></div>`;
-	});
-
-	document.getElementById('displaynews').innerHTML = display;
-	for (let index = 0; index < selectedData.length; index++) {
-		document.getElementById(`myBtn${index}`).addEventListener('click', function () {
-			console.log(data);
-			showpopup(indexDisplay[index], data);
-		});
-	}
-};
 
 //For Validation of Email Address
 let validate = () => {
